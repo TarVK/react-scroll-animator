@@ -1,0 +1,43 @@
+{
+    "name": "react-scroll-animator",
+    "version": "1.0.0",
+    "description": "System for creating animations based on scroll location in react",
+    "main": "build.js",
+    "scripts": {
+        "start": "webpack-dev-server --open",
+        "build": "webpack"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LaunchMenu/AdjustDocs.git"
+    },
+    "keywords": [
+        "Adjust",
+        "docs",
+        "site"
+    ],
+    "author": "Tar van Krieken",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/LaunchMenu/AdjustDocs/issues"
+    },
+    "homepage": "https://github.com/LaunchMenu/AdjustDocs#readme",
+    "dependencies": {
+        "react": "^16.8.6"
+    },
+    "devDependencies": {
+        "@emotion/core": "^10.0.10",
+        "@emotion/styled": "^10.0.12",
+        "@rehooks/window-size": "^1.0.2",
+        "@types/react": "^16.8.19",
+        "@types/react-dom": "^16.8.4",
+        "@types/react-router-dom": "^4.3.3",
+        "react-dom": "^16.8.6",
+        "react-router-dom": "^5.0.0",
+        "ts-loader": "^6.0.2",
+        "typescript": "^3.5.1",
+        "webpack": "^4.32.2",
+        "webpack-cli": "^3.3.2",
+        "webpack-dev-server": "^3.5.0"
+    }
+}
