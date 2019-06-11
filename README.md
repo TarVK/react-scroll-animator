@@ -31,8 +31,7 @@ Consider [this basic example](https://github.com/TarVK/react-scroll-animator/blo
                 position: "relative",
                 top: 800,
                 height: 20,
-                marginLeft: map($margin, 0, 200, {easing: "easeInOutSin"})
-            }}>
+                marginLeft: map($margin, 0, 200, {easing: "easeInOutSin"})}}>
             {/* Use the map function to map 0-1 to the integers 0-lengthOfText */}
             {text.substring(0, map($text, text.length, {digits: 0}))}
         </div>
