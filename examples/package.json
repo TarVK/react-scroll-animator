@@ -1,14 +1,10 @@
 {
-    "name": "react-scroll-animator",
-    "version": "0.0.2",
-    "description": "System for creating animations based on scroll location in react",
-    "main": "build/index.js",
-    "types": "build/index.d.ts",
-    "files": [
-        "build/*"
-    ],
+    "name": "react-scroll-animator-examples",
+    "version": "1.0.0",
+    "description": "Examples for react-scroll-animator",
+    "private": true,
     "scripts": {
-        "start": "webpack --watch",
+        "start": "webpack-dev-server --open",
         "build": "webpack"
     },
     "repository": {
@@ -26,19 +22,19 @@
         "url": "https://github.com/TarVK/react-scroll-animator/issues"
     },
     "homepage": "https://github.com/TarVK/react-scroll-animator#readme",
-    "peerDependencies": {
-        "react": "^16.8.6"
-    },
-    "devDependencies": {
+    "dependencies": {
         "@emotion/core": "^10.0.10",
         "@emotion/styled": "^10.0.12",
         "@rehooks/window-size": "^1.0.2",
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6",
+        "react-router-dom": "^5.0.0",
+        "react-scroll-animator": "link:.."
+    },
+    "devDependencies": {
         "@types/react": "^16.8.19",
         "@types/react-dom": "^16.8.4",
         "@types/react-router-dom": "^4.3.3",
-        "react-dom": "^16.8.6",
-        "react": "^16.8.6",
-        "react-router-dom": "^5.0.0",
         "ts-loader": "^6.0.2",
         "typescript": "^3.5.1",
         "webpack": "^4.32.2",

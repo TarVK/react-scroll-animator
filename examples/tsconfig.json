@@ -3,13 +3,13 @@
         "moduleResolution": "node",
         "outDir": "./build/",
         "sourceMap": true,
-        "declaration": true,
         "module": "es6",
         "target": "es5",
         "jsx": "react",
+        "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "preserveSymlinks": true
     },
-    "types": ["node"],
-    "exclude": ["node_modules", "**/node_modules/*", "build", "examples"]
+    "types": ["node", "@emotion/core"],
+    "exclude": ["node_modules", "**/node_modules/*", "build"]
 }

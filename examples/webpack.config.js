@@ -1,9 +1,8 @@
 const path = require("path");
 const build = path.join(process.cwd(), "build");
 module.exports = {
-    entry: "./src/index.ts",
+    entry: "./src/index.tsx",
     devtool: "inline-source-map",
-    mode: "production",
     module: {
         rules: [
             {
@@ -13,13 +12,17 @@ module.exports = {
             },
         ],
     },
+    devServer: {
+        contentBase: [build],
+        compress: true,
+        port: 3000,
+        historyApiFallback: true,
+    },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
     },
     output: {
-        filename: "index.js",
+        filename: "bundle.js",
         path: build,
-        library: "library",
-        libraryTarget: "umd",
     },
 };
