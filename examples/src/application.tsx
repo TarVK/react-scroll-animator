@@ -10,6 +10,16 @@ import {ParallelPage} from "./pages/parallelPage";
 import {OncePage} from "./pages/oncePage";
 import {CssPage} from "./pages/cssPage";
 
+const L = props => (
+    <>
+        <br />-{" "}
+        <Link
+            style={{marginTop: 5, display: "inline-block"}}
+            to={"/" + props.page.toLowerCase()}>
+            {props.page}
+        </Link>
+    </>
+);
 const Page = withRouter(props => {
     // Reset the scroll offset
     document.body.scrollTop = 0;
@@ -27,24 +37,15 @@ const Page = withRouter(props => {
                     zIndex: 1000,
                 }}>
                 Examples:
-                <br />
-                <Link to="/basics">Basics</Link>
-                <br />
-                <Link to="/once">Once</Link>
-                <br />
-                <Link to="/combine">Combine</Link>
-                <br />
-                <Link to="/stagger">Stagger</Link>
-                <br />
-                <Link to="/parallel">Parallel</Link>
-                <br />
-                <Link to="/css">Css</Link>
-                <br />
-                <Link to="/pin">Pin</Link>
-                <br />
-                <Link to="/reference">Reference</Link>
-                <br />
-                <Link to="/template">Template</Link>
+                <L page="basics" />
+                <L page="once" />
+                <L page="combine" />
+                <L page="stagger" />
+                <L page="parallel" />
+                <L page="css" />
+                <L page="pin" />
+                <L page="reference" />
+                <L page="template" />
             </div>
             <Route
                 exact
