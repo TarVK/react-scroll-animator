@@ -15,7 +15,7 @@ export const OncePage = () => (
                         position: "relative",
                         top: 800,
                         height: 20,
-                        // Use map to map the values from 0-200 and apply easing (argument 0 may be left out)
+                        /* Use map to map the values from 0-200 and apply easing (argument 0 may be left out) */
                         marginLeft: map($margin, 0, 200, {easing: "easeInOutSin"}),
                     }}>
                     {/* Use the map function to map 0-1 to the integers 0-lengthOfText */}
