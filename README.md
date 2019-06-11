@@ -69,7 +69,7 @@ Animations that you don't want to reset when the user scrolls back up, can use t
 </Animator>
 ```
 
-See the [example](http://localhost:3000/#/once) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/oncePage.tsx)
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/once) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/oncePage.tsx)
 
 ## Latest
 
@@ -95,7 +95,7 @@ values: A list of values to use to return the latest from
 </div>
 ```
 
-See the [example](http://localhost:3000/#/combine) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/combinePage.tsx)
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/combine) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/combinePage.tsx)
 
 
 ## Stagger
@@ -116,7 +116,7 @@ The animator component also allows sections to define an offset, in order to sta
 </Animator>
 ```
 
-See the [example](http://localhost:3000/#/stagger) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/staggerPage.tsx)
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/stagger) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/staggerPage.tsx)
 
 ## Parallel
 
@@ -136,7 +136,7 @@ The animator component allows sequences of sections to be executed in parallel, 
 </Animator>
 ```
 
-See the [example](http://localhost:3000/#/parallel) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/parallelPage.tsx)
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/parallel) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/parallelPage.tsx)
 
 ## Css
 
@@ -146,7 +146,7 @@ As one might expect, this library can easily be used together with css animation
 <div className={"box1" + ($box1 == 1 ? " active" : "")} />
 ```
 
-See the [example](http://localhost:3000/#/css) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/cssPage.tsx)
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/css) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/cssPage.tsx)
 
 ## Pin
 
@@ -170,7 +170,7 @@ const h = document.body.clientHeight;
 </Animator>
 ```
 
-See the [example](http://localhost:3000/#/pin) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/pinPage.tsx)
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/pin) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/pinPage.tsx)
 
 ## Reference
 
@@ -207,7 +207,7 @@ The `RefCreator` has one property `count`, which defines the number of Reference
 
 Each reference will contain the variables `x`, `y`, `width`, `height` and the referenced element `element`, where the `x` and `y` are relative to the page. They also contain a method `update` for updating these variables, since they won't update as the element changes, and `refresh` to call the render method of `RefCreator` again, in order to update all dependencies on the reference.
 
-See the [example](http://localhost:3000/#/reference) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/referencePage.tsx)
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/reference) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/referencePage.tsx)
 
 ### Templating
 
@@ -215,7 +215,7 @@ These references can be used very neatly to create a template of what you want y
 
 In the example below, try making the view port small enough such that the 2 containers don't fit next to each other, the animation will still work properly.
 
-This can be seen in this [example](http://localhost:3000/#/reference) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/referencePage.tsx)
+This can be seen in this [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/reference) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/referencePage.tsx)
 
 # Contributing
 
