@@ -32,7 +32,7 @@ Consider [this basic example](https://github.com/TarVK/react-scroll-animator/blo
                 top: 800,
                 height: 20,
                 // Use map to map the values from 0-200 and apply easing (argument 0 may be left out)
-                marginLeft: map($margin, 0, 200, {easing: "easeInOutSin"}),
+                marginLeft: map($margin, 0, 200, {easing: "easeInOutSin"})
             }}>
             {/* Use the map function to map 0-1 to the integers 0-lengthOfText */}
             {text.substring(0, map($text, text.length, {digits: 0}))}
@@ -89,7 +89,7 @@ values: A list of values to use to return the latest from
                 map($left1, 0, 200),
                 map($left2, 200, 400),
             ]
-        ),
+        )
     }}>
     ...
 </div>
@@ -130,7 +130,7 @@ The animator component allows sequences of sections to be executed in parallel, 
             [{$1s1: 150}, {$2s1: 100}, {$3s1: 100}],
             [{$1s2: 100}, {$2s2: 100}, {$3s2: 100}],
         ],
-        {$end: 100},
+        {$end: 100}
     ]}>
     ...
 </Animator>
@@ -160,7 +160,7 @@ const h = document.body.clientHeight;
     sections={[
         {$scrollIn: [h, h / 2]},
         {$something: 300},
-        {$scrollOut: [h / 2, -30]},
+        {$scrollOut: [h / 2, -30]}
     ]}>
     {({$scrollIn, $something, $scrollOut}) => (
         <Pin sections={{$scrollIn, $scrollOut}}>
@@ -194,7 +194,7 @@ Since you probably don't want to hardcode in locations for elements (assuming yo
                 style={{
                     width: Ref.width,
                     height: Ref.height,
-                    display: "inline-block",
+                    display: "inline-block"
                 }}>
                 Yes
             </div>
