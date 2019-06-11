@@ -22,9 +22,9 @@ export declare type NormalizedSection = {
     index: number;
 };
 declare type SectionValues<S extends Section[]> = S extends {
-    [st: string]: number;
+    [st: string]: Range;
 }[] ? {
-    [P in keyof S[any]]: number;
+    [P in Exclude<keyof S[any], "offset">]: number;
 } : {
     [section: string]: number;
 };

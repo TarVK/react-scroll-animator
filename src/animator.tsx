@@ -27,8 +27,8 @@ export type NormalizedSection = {
     index: number;
 };
 
-type SectionValues<S extends Section[]> = S extends {[st: string]: number}[]
-    ? {[P in keyof S[any]]: number}
+type SectionValues<S extends Section[]> = S extends {[st: string]: Range}[]
+    ? {[P in Exclude<keyof S[any], "offset">]: number}
     : {[section: string]: number};
 
 // The main animator class that will just sequence your variables
