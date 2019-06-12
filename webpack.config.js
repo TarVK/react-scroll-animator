@@ -15,7 +15,7 @@ module.exports = env => ({
     },
     externals: {
         // Use external version of React
-        react: "React",
+        react: "react",
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
