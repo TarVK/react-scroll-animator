@@ -1,9 +1,9 @@
 const path = require("path");
 const build = path.join(process.cwd(), "build");
-module.exports = {
+module.exports = env => ({
     entry: "./src/index.ts",
-    devtool: "inline-source-map",
-    mode: "production",
+    // ...(env != "prod" && {devtool: "inline-source-map"}),
+    mode: env == "prod" ? "production" : "development",
     module: {
         rules: [
             {
@@ -12,6 +12,10 @@ module.exports = {
                 exclude: /node_modules/,
             },
         ],
+    },
+    externals: {
+        // Use external version of React
+        react: "React",
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
@@ -22,4 +26,4 @@ module.exports = {
         library: "library",
         libraryTarget: "umd",
     },
-};
+});

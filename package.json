@@ -8,8 +8,8 @@
         "build/*"
     ],
     "scripts": {
-        "start": "webpack --watch",
-        "build": "webpack"
+        "start": "webpack --watch --env dev",
+        "build": "webpack --env prod"
     },
     "repository": {
         "type": "git",
