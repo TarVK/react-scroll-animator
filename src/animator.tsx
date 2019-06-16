@@ -25,33 +25,46 @@ export type NormalizedSection = {
     };
     offset: number;
     index: number;
+    endIndex: number;
 };
 
 type SectionValues<S extends Section[]> = S extends {[st: string]: Range}[]
     ? {[P in Exclude<keyof S[any], "offset">]: number}
     : {[section: string]: number};
 
+type AnimatorProps<S extends Section[]> = {
+    sections: S;
+    progress?: number;
+    elementScroll?: boolean; //Whether to use a scrollbar of a custom element
+    children: (
+        // The actual section variables
+        sections: SectionValues<S>,
+
+        // The sections such that their value only increments and never decrements
+        sectionsOnce: SectionValues<S>,
+
+        // The offsets of all the sections
+        offsets: {[section: string]: number},
+
+        // The total progress
+        totalProgress: number
+    ) => JSX.Element;
+};
+type AnimatorState<S extends Section[]> = {};
+
 // The main animator class that will just sequence your variables
 export class Animator<S extends Section[]> extends Component<
-    {
-        sections: S;
-        progress?: number;
-        elementScroll?: boolean; //Whether to use a scrollbar of a custom element
-        children: (
-            // The actual section variables
-            sections: SectionValues<S>,
-
-            // The sections such that their value only increments and never decrements
-            sectionsOnce: SectionValues<S>,
-
-            // The total progress
-            totalProgress: number
-        ) => JSX.Element;
-    },
-    {}
+    AnimatorProps<S>,
+    AnimatorState<S>
 > {
     // Stores the normalized version of the sections
     protected normalizedSections: NormalizedSection[];
+
+    // Stores the normalized version of the sections, in order of the scroll pos that they end
+    protected normalizedSectionsSortedEnd: NormalizedSection[];
+
+    // Stores an object with all the offsets of the sections
+    protected offsets: {[section: string]: number};
 
     // The range of the animation; The number of pixels that can be scrolled from start to finish
     protected range: number;
@@ -61,6 +74,12 @@ export class Animator<S extends Section[]> extends Component<
 
     // Stores the biggest vallue that any of the sections have had so far
     protected largestSectionValues: SectionValues<S> = {} as any;
+
+    // Cache the current section values
+    protected sectionValues: SectionValues<S> = {} as any;
+
+    // The index of the section(s) that is currently changed between 0 and 1
+    protected changingIndex: number[] = [0];
 
     /**
      * Get the peroperty data corresponding to a property name
@@ -72,16 +91,97 @@ export class Animator<S extends Section[]> extends Component<
     };
 
     /**
+     * Creates an animator component
+     * @param props The peroperties of thie element
+     */
+    constructor(props: AnimatorProps<S>) {
+        super(props);
+
+        // Calculate the normmalized sections
+        this.updateSections(props.sections);
+
+        // Store the initial section values
+        this.sectionValues = this.getInitialSectionValues();
+        this.largestSectionValues = this.getInitialSectionValues();
+    }
+
+    /**
+     * Updates the section variables of the component
+     * @param inpSections The sections that were passed
+     */
+    updateSections(inpSections: S) {
+        const {sections, sectionsEnd, range} = this.normalizeSections(inpSections);
+        this.normalizedSections = sections;
+        this.normalizedSectionsSortedEnd = sectionsEnd;
+        this.range = range;
+
+        // Update the offsets
+        this.offsets = {} as any;
+        this.normalizedSections.forEach(section => {
+            (this.offsets as any)[section.name + "Offset"] = section.offset;
+        });
+    }
+
+    /**
+     * Updates the normalized sections if the scetions changed
+     * @param nextProps The new props that will be received
+     * @param nextState The new state that will be set
+     */
+    shouldComponentUpdate(
+        nextProps: AnimatorProps<S>,
+        nextState: AnimatorState<S>
+    ): boolean {
+        if (nextProps.sections != this.props.sections) {
+            this.updateSections(nextProps.sections);
+        }
+        return true;
+    }
+
+    /**
+     * Inserts the section into the sections array, keeping the array sorted
+     * @param sections The sorted array to insert the section into
+     * @param sectionsEnd The sorted array based on the end to insert the section into
+     * @param section The section to add into the array
+     */
+    insertSorted(
+        sections: NormalizedSection[],
+        sectionsEnd: NormalizedSection[],
+        section: NormalizedSection
+    ): void {
+        insert: {
+            // Insert the section into the correct location to be ordered by offset
+            for (let i = 0; i < sections.length; i++) {
+                if (section.offset < sections[i].offset) {
+                    sections.splice(i, 0, section);
+                    break insert;
+                }
+            }
+            sections.push(section);
+        }
+        insertEnd: {
+            // Insert the section into the correct location to be ordered by offset + range
+            for (let i = 0; i < sectionsEnd.length; i++) {
+                if (
+                    section.offset + section.range.delta <
+                    sectionsEnd[i].offset + sectionsEnd[i].range.delta
+                ) {
+                    sectionsEnd.splice(i, 0, section);
+                    break insertEnd;
+                }
+            }
+            sectionsEnd.push(section);
+        }
+    }
+
+    /**
      * Normalizes a single section
      * @param section THe section to be normalized
      * @param offset The offset of the section
-     * @param index THe index of the section
      * @returns The normalized section
      */
     normalizeSection(
         section: Section,
-        offset: number,
-        index: number
+        offset: number
     ): {section: NormalizedSection; offset: number} {
         // If the argument is a normal section, get its name and data
         const sectionName = Object.keys(section)[0];
@@ -104,7 +204,8 @@ export class Animator<S extends Section[]> extends Component<
         return {
             section: {
                 name: sectionName,
-                index: index,
+                index: 0,
+                endIndex: 0,
                 offset: offset,
                 range: {
                     start,
@@ -119,15 +220,17 @@ export class Animator<S extends Section[]> extends Component<
     /**
      * Normalizes parallel sections (an array of section arrays) into a flat array of normalized sections
      * @param sections The parallel sections to normalize
+     * @param normSections The normalized sections to insert to
+     * @param normSectionsEnd The normalized sections sorted on the end to insert to
      * @param offset The initial offset of the sections being considered
-     * @param index The initial index of the sections being considered
      * @returns THe normalized flattened sections
      */
     normalizeParallelSections(
         sections: Section[][],
-        offset: number,
-        index: number
-    ): {sections: NormalizedSection[]; range: number} {
+        normSections: NormalizedSection[],
+        normSectionsEnd: NormalizedSection[],
+        offset: number
+    ): {sections: NormalizedSection[]; sectionsEnd: NormalizedSection[]; range: number} {
         // Go through each of the parallel section lists
         const normSubSections = sections.reduce(
             (normSubSections, section) => {
@@ -139,35 +242,26 @@ export class Animator<S extends Section[]> extends Component<
 
                 // Go through each of the sub sections and insert them into the sections
                 const sections = normSubSections.sections;
+                const sectionsEnd = normSubSections.sectionsEnd;
                 subSections.sections.forEach(subSection => {
-                    // Insert the section into the correct location to be ordered by  offset
-                    for (let i = 0; i < sections.length; i++) {
-                        if (subSection.offset < sections[i].offset) {
-                            sections.splice(i, 0, subSection);
-                            return;
-                        }
-                    }
-                    sections.push(subSection);
+                    this.insertSorted(sections, sectionsEnd, subSection);
                 });
 
                 return {
-                    sections: sections,
-                    range: range,
+                    sections,
+                    sectionsEnd,
+                    range,
                 };
             },
-            {sections: [], range: 0} as {
+            {sections: normSections, sectionsEnd: normSectionsEnd, range: 0} as {
                 sections: NormalizedSection[];
+                sectionsEnd: NormalizedSection[];
                 range: number;
             }
         );
 
-        // Correct the indices
-        normSubSections.sections.forEach((section, i) => {
-            section.index = i + index;
-        });
-
         // Return the data
-        return normSubSections;
+        return normSubSections as any;
     }
 
     /**
@@ -179,11 +273,12 @@ export class Animator<S extends Section[]> extends Component<
     normalizeSections(
         sections: Section[],
         offset: number = 0
-    ): {sections: NormalizedSection[]; range: number} {
-        return sections.reduce(
+    ): {sections: NormalizedSection[]; sectionsEnd: NormalizedSection[]; range: number} {
+        const normSections = sections.reduce(
             (
                 normSections: {
                     sections: NormalizedSection[];
+                    sectionsEnd: NormalizedSection[];
                     range: number;
                 },
                 section
@@ -193,60 +288,110 @@ export class Animator<S extends Section[]> extends Component<
                     // Return sections augmented by sub sections
                     const normSubSections = this.normalizeParallelSections(
                         section,
-                        normSections.range,
-                        normSections.sections.length
+                        normSections.sections,
+                        normSections.sectionsEnd,
+                        normSections.range
                     );
 
                     // Augment the current data and return it
-                    return {
-                        sections: normSections.sections.concat(normSubSections.sections),
-                        range: normSubSections.range,
-                    };
+                    return normSubSections;
                 } else {
                     const normSection = this.normalizeSection(
                         section,
-                        normSections.range,
-                        normSections.sections.length
+                        normSections.range
                     );
 
                     // Augment the sections list with the new section
-                    normSections.sections.push(normSection.section);
+                    this.insertSorted(
+                        normSections.sections,
+                        normSections.sectionsEnd,
+                        normSection.section
+                    );
 
                     // Return the new data
                     return {
                         sections: normSections.sections,
+                        sectionsEnd: normSections.sectionsEnd,
                         range: normSection.offset,
                     };
                 }
             },
-            {sections: [], range: offset}
+            {sections: [], sectionsEnd: [], range: offset}
         ) as any;
+
+        // Update the indices of the sections
+        normSections.sections.forEach((section, index) => {
+            section.index = index;
+        });
+        normSections.sectionsEnd.forEach((section, index) => {
+            section.endIndex = index;
+        });
+
+        return normSections;
+    }
+
+    /**
+     * Retyrives the section values which are all initialized to 0
+     * @returns The sections with value 0
+     */
+    getInitialSectionValues(): SectionValues<S> {
+        const sections = {};
+        this.normalizedSections.forEach(section => {
+            sections[section.name] = 0;
+        });
+        return sections as any;
     }
 
     /**
      * Retrieves the actual section values given some pprogress
      * @param progress The progress between 0 and the range
-     * @returns The scetions with their values
+     * @returns The sections with their values
      */
-    getSectionValues(progress: number): SectionValues<S> {
+    updateSectionValues(progress: number): SectionValues<S> {
         // Compute the values for each of the sections
-        const sections = {};
-        this.normalizedSections.forEach(
-            section =>
-                (sections[section.name] = Math.min(
-                    1,
-                    Math.max(0, progress - section.offset) / section.range.delta
-                ))
-        );
+        for (let i = 0; i < this.changingIndex.length; i++) {
+            const index = this.changingIndex[i];
+            const section = this.normalizedSections[index];
+            const sd = progress - section.offset;
+            const delta = section.range.delta;
+            const value = Math.min(1, Math.max(0, sd) / delta);
 
-        // Update the largest section values
-        const values = this.largestSectionValues as any;
-        Object.keys(sections).forEach(section => {
-            values[section] = Math.max(values[section] || 0, sections[section]);
-        });
+            // Update the value
+            (this.sectionValues as any)[section.name] = value;
+
+            // Store the maximum in max values
+            if (value > this.largestSectionValues[section.name])
+                (this.largestSectionValues as any)[section.name] = value;
+
+            // Check if the previous animation should start
+            let sec;
+            const endIndex = section.endIndex;
+            if (
+                (sec = this.normalizedSectionsSortedEnd[endIndex - 1]) &&
+                sec.offset + sec.range.delta > progress &&
+                this.changingIndex.indexOf(sec.index) == -1
+            )
+                this.changingIndex.push(sec.index);
+
+            // Check if the next animation should start
+            if (
+                (sec = this.normalizedSections[index + 1]) &&
+                sec.offset < progress &&
+                this.changingIndex.indexOf(index + 1) == -1
+            )
+                this.changingIndex.push(index + 1);
+
+            // If the value hit the minimum, remove it if there are any other animations going
+            if (sd < 0 && this.changingIndex.length > 1)
+                this.changingIndex.splice(i--, 1);
+
+            // If the value hit the maximum, remove it if there are any other animations going
+            if (sd > delta && this.changingIndex.length > 1)
+                this.changingIndex.splice(i--, 1);
+        }
 
         // Return the sections
-        return sections as any;
+        return this.sectionValues;
     }
 
     /**
@@ -255,7 +400,7 @@ export class Animator<S extends Section[]> extends Component<
      * @returns The rendered jsx element
      */
     renderContent(progress: number) {
-        const sections = this.getSectionValues(progress);
+        const sections = this.updateSectionValues(progress);
 
         return (
             <AnimationContext.Provider
@@ -269,6 +414,7 @@ export class Animator<S extends Section[]> extends Component<
                     {this.props.children(
                         sections as any,
                         this.largestSectionValues,
+                        this.offsets,
                         progress / this.range
                     )}
                 </div>
@@ -280,10 +426,6 @@ export class Animator<S extends Section[]> extends Component<
      * Renders the entirety of the animation contents
      */
     render() {
-        const {sections, range} = this.normalizeSections(this.props.sections);
-        this.normalizedSections = sections;
-        this.range = range;
-
         if (this.props.progress == undefined) {
             // Render the content with the progress based on the scroll position
             return (

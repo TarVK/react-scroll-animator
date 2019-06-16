@@ -9,6 +9,7 @@ import {StaggerPage} from "./pages/staggerPage";
 import {ParallelPage} from "./pages/parallelPage";
 import {OncePage} from "./pages/oncePage";
 import {CssPage} from "./pages/cssPage";
+import {PageOffsetPage} from "./pages/pageOffsetPage";
 
 const L = props => (
     <>
@@ -44,6 +45,7 @@ const Page = withRouter(props => {
                 <L page="parallel" />
                 <L page="css" />
                 <L page="pin" />
+                <L page="pageOffset" />
                 <L page="reference" />
                 <L page="template" />
             </div>
@@ -68,6 +70,7 @@ const Page = withRouter(props => {
             <Route path="/parallel" component={ParallelPage} />
             <Route path="/css" component={CssPage} />
             <Route path="/pin" component={PinPage} />
+            <Route path="/pageOffset" component={PageOffsetPage} />
             <Route path="/reference" component={ReferencePage} />
             <Route path="/template" component={TemplatePage} />
         </>

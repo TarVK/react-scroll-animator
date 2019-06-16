@@ -1,6 +1,6 @@
 {
     "name": "react-scroll-animator",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "System for creating animations based on scroll location in react",
     "main": "build/index.js",
     "types": "build/index.d.ts",

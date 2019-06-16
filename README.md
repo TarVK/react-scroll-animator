@@ -172,6 +172,28 @@ const h = document.body.clientHeight;
 
 See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/pin) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/pinPage.tsx)
 
+
+## Page offset
+
+When you want to add an element without a pin to come into view at the moment a section starts, you can use the third callback parameter. This parameter will simply be the sum of the ranges of sections that came before.
+
+```jsx
+const h = document.body.clientHeight;
+<Animator
+    sections={[
+        {$scrollIn: [h, h / 2]},
+        {$something: 300},
+        {$scrollOut: [h / 2, -30]}
+    ]}>
+    {({$scrollIn, $something, $scrollOut}, _, {$scrollInOffset, $somethingOffset, $scrollOutOffset}) => (
+        <div>...</div>
+    )}
+</Animator>
+```
+in the example above, the offset variables will have values `0, h/2, h/2+300` respectively.
+
+See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/pageOffset) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/pageOffsetPage.tsx)
+
 ## Reference
 
 Since you probably don't want to hardcode in locations for elements (assuming you want a design that's at least somewhat responsive) a method for creating element references is provided. This allows you to wrap your element in a `Reference` component, and retrieve the location and size of that reference.

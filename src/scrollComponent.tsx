@@ -34,11 +34,11 @@ export class ScrollComponent extends Component<
      * Update the offset whenever a scroll occurs
      */
     handleScroll = event => {
-        this.setState({
+        this.setState(() => ({
             scroll: event.srcElement.body
                 ? event.srcElement.body.scrollTop
                 : event.srcElement.scrollTop,
-        });
+        }));
     };
 
     /**
@@ -46,7 +46,7 @@ export class ScrollComponent extends Component<
      */
     componentWillMount() {
         if (!this.props.elementScroll)
-            document.addEventListener("scroll", this.handleScroll);
+            document.addEventListener("scroll", this.handleScroll, {passive: false});
     }
 
     /**
