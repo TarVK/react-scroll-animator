@@ -1,4 +1,5 @@
 # react-scroll-animator
+
 This package aims to provide a minimal set of generic tools that allow complicated scroll animation sequences to be defined in a concise way using the power of React.
 The progress of these animations is determined by the scroll location of the page.
 
@@ -14,14 +15,17 @@ npm install react-scroll-animator --save
 import {Animator} from "react-scroll-animator";
 ```
 
+# Usage
 
-# Usage 
 The core aspect of scroll-animator is the actual Animator component. This component allows you to define multiple sections of the animation, and at what scroll offset, relative to the previous section, they should start.
 The corresponding variables will increase from 0-1 in sequence, as the user scrolls the specified distance.
 
 Consider [this basic example](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/basicsPage.tsx), and its [result](https://tarvk.github.io/react-scroll-animator/examples/build/#/basics)
+
 ```jsx
-{/* Create an animator instance and specify the animation sections and their ranges */}
+{
+    /* Create an animator instance and specify the animation sections and their ranges */
+}
 <Animator sections={[{$margin: 300}, {$text: 200}]}>
     {({$margin, $text}) => (
         // Create the content to show, uusing the passed section variables whose values range from 0 to 1
@@ -32,18 +36,19 @@ Consider [this basic example](https://github.com/TarVK/react-scroll-animator/blo
                 top: 800,
                 height: 20,
                 /* Use map to map the values from 0-200 and apply easing (argument 0 may be left out) */
-                marginLeft: map($margin, 0, 200, {easing: "easeInOutSin"})
+                marginLeft: map($margin, 0, 200, {easing: "easeInOutSin"}),
             }}>
             {/* Use the map function to map 0-1 to the integers 0-lengthOfText */}
             {text.substring(0, map($text, text.length, {digits: 0}))}
         </div>
     )}
-</Animator>
+</Animator>;
 ```
 
 ## Map
 
 The package contains a simple map function, that takes 4 arguments, of which the second is optional:
+
 ```
 map(progress, start, end, options);
 progress: value from 0-1
@@ -54,12 +59,13 @@ options: {
     easing: The name of a easing function to apply (linear by default)
 }
 ```
-See the available easing methods [here](https://github.com/TarVK/react-scroll-animator/blob/master/src/easing.tsx)
 
+See the available easing methods [here](https://github.com/TarVK/react-scroll-animator/blob/master/src/easing.tsx)
 
 ## Once
 
 Animations that you don't want to reset when the user scrolls back up, can use the second callbackParameter. This parameter will be the greatest value that each section has had so far.
+
 ```jsx
 <Animator sections={[{$margin: 300}, {$text: 200}]}>
     {({$margin, $text}, {$margin: $marginMax, $text: $textMax}) => (
@@ -74,6 +80,7 @@ See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#
 ## Latest
 
 latest can be used to pick the latest value from a set of variables, this way you can animate the same property, using multiple sections. This is usefull when you want a break in a transition, or reverse it at some moment.
+
 ```
 latest(sections, values);
 sections: A list of the section variables that map to the values
@@ -85,18 +92,14 @@ values: A list of values to use to return the latest from
     style={{
         marginLeft: latest(
             [$left1, $left2],
-            [
-                map($left1, 0, 200),
-                map($left2, 200, 400),
-            ]
-        )
+            [map($left1, 0, 200), map($left2, 200, 400)]
+        ),
     }}>
     ...
 </div>
 ```
 
 See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/combine) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/combinePage.tsx)
-
 
 ## Stagger
 
@@ -130,7 +133,7 @@ The animator component allows sequences of sections to be executed in parallel, 
             [{$1s1: 150}, {$2s1: 100}, {$3s1: 100}],
             [{$1s2: 100}, {$2s2: 100}, {$3s2: 100}],
         ],
-        {$end: 100}
+        {$end: 100},
     ]}>
     ...
 </Animator>
@@ -152,26 +155,19 @@ See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#
 
 When you want an element to only scroll at certain moments on the page, you can make use of the Pin component. This component will only scroll during the passed sections.
 
-The Animator component allows for a section's range to be defined as a `start` and `end` value, such that the actual animation scroll distance will be its delta. And the Pin component can then read these `start` and `end` values to determine what locations to scroll to. 
+The Animator component allows for a section's range to be defined as a `start` and `end` value, such that the actual animation scroll distance will be its delta. And the Pin component can then read these `start` and `end` values to determine what locations to scroll to.
 
 ```jsx
 const h = document.body.clientHeight;
 <Animator
-    sections={[
-        {$scrollIn: [h, h / 2]},
-        {$something: 300},
-        {$scrollOut: [h / 2, -30]}
-    ]}>
+    sections={[{$scrollIn: [h, h / 2]}, {$something: 300}, {$scrollOut: [h / 2, -30]}]}>
     {({$scrollIn, $something, $scrollOut}) => (
-        <Pin sections={{$scrollIn, $scrollOut}}>
-            ...
-        </Pin>
+        <Pin sections={{$scrollIn, $scrollOut}}>...</Pin>
     )}
-</Animator>
+</Animator>;
 ```
 
 See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/pin) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/pinPage.tsx)
-
 
 ## Page offset
 
@@ -180,16 +176,15 @@ When you want to add an element without a pin to come into view at the moment a 
 ```jsx
 const h = document.body.clientHeight;
 <Animator
-    sections={[
-        {$scrollIn: [h, h / 2]},
-        {$something: 300},
-        {$scrollOut: [h / 2, -30]}
-    ]}>
-    {({$scrollIn, $something, $scrollOut}, _, {$scrollInOffset, $somethingOffset, $scrollOutOffset}) => (
-        <div>...</div>
-    )}
-</Animator>
+    sections={[{$scrollIn: [h, h / 2]}, {$something: 300}, {$scrollOut: [h / 2, -30]}]}>
+    {(
+        {$scrollIn, $something, $scrollOut},
+        _,
+        {$scrollInOffset, $somethingOffset, $scrollOutOffset}
+    ) => <div>...</div>}
+</Animator>;
 ```
+
 in the example above, the offset variables will have values `0, h/2, h/2+300` respectively.
 
 See the [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/pageOffset) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/pageOffsetPage.tsx)
@@ -204,8 +199,7 @@ Since you probably don't want to hardcode in locations for elements (assuming yo
         <div>
             {/* Create a refence element */}
             <Ref>
-                <div
-                    style={{display: "inline-block"}}>
+                <div style={{display: "inline-block"}}>
                     Hello text
                     <br /> test
                 </div>
@@ -216,7 +210,7 @@ Since you probably don't want to hardcode in locations for elements (assuming yo
                 style={{
                     width: Ref.width,
                     height: Ref.height,
-                    display: "inline-block"
+                    display: "inline-block",
                 }}>
                 Yes
             </div>
@@ -242,7 +236,32 @@ This can be seen in this [example](https://tarvk.github.io/react-scroll-animator
 # Contributing
 
 Any contributions to the package are welcome. Currently the main points of interests however are:
+
 -   Making type declaration cleaner, and trying to support the nested parallel sequences
 -   Trying to improve performance by only recomputing percenteges that have changed
 -   Making nicer looking examples, and potentially a proper website
 
+## Setup
+
+### Installation
+
+Firstly, make sure node any yarn are installed
+Then run the following command in both the root directory, and the examples directory:
+
+```
+yarn install
+```
+
+#### Testing
+
+To run the compilation process, in the root directory:
+
+```
+npm start
+```
+
+Running the examples/test, in the examples directory:
+
+```
+npm start
+```
