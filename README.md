@@ -231,7 +231,7 @@ These references can be used very neatly to create a template of what you want y
 
 In the example below, try making the view port small enough such that the 2 containers don't fit next to each other, the animation will still work properly.
 
-This can be seen in this [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/reference) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/referencePage.tsx)
+This can be seen in this [example](https://tarvk.github.io/react-scroll-animator/examples/build/#/template) and its [code](https://github.com/TarVK/react-scroll-animator/blob/master/examples/src/pages/referencePage.tsx)
 
 # Contributing
 
@@ -263,5 +263,5 @@ npm start
 Running the examples/test, in the examples directory:
 
 ```
-npm start
+npm run build
 ```
